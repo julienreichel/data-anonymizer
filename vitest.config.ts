@@ -8,8 +8,10 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
+      reportsDirectory: 'coverage',
+      reporter: ['text', 'lcov', 'json-summary'],
       include: ['app/**/*.ts', 'amplify/**/*.ts'],
-      exclude: ['amplify/**/__tests__/**', '**/*.{test,spec}.ts'],
+      exclude: ['amplify/**/__tests__/**', 'app/**/__tests__/**', '**/*.{test,spec}.ts'],
       thresholds: {
         lines: 0,
         functions: 0,
