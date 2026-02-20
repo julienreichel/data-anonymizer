@@ -13,8 +13,8 @@ on:
         default: false
 
 jobs:
-  lint:
-    name: Lint
+  checks:
+    name: Lint, Type Check, Unit Tests & Coverage Gate
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -35,43 +35,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-  typecheck:
-    name: Type Check
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Prepare Nuxt (generates .nuxt/tsconfig.*.json)
-        run: npm run postinstall
-
       - name: Type check
         run: npm run typecheck
-
-  test:
-    name: Unit Tests & Coverage Gate
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Run tests with coverage
         run: npm run test:coverage
@@ -93,7 +58,7 @@ jobs:
 
   sandbox-api-tests:
     name: Sandbox API Tests (Optional)
-    needs: [lint, typecheck, test]
+    needs: [checks]
     if: |
       contains(github.event.pull_request.labels.*.name, 'sandbox-tests') ||
       (github.event_name == 'workflow_dispatch' && inputs.run_sandbox_tests)
@@ -135,12 +100,10 @@ jobs:
 
   deploy:
     name: Deploy (Amplify)
-    needs: [lint, typecheck, test, sandbox-api-tests]
+    needs: [checks, sandbox-api-tests]
     if: |
       github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-      needs.lint.result == 'success' &&
-      needs.typecheck.result == 'success' &&
-      needs.test.result == 'success' &&
+      needs.checks.result == 'success' &&
       (needs.sandbox-api-tests.result == 'success' || needs.sandbox-api-tests.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
