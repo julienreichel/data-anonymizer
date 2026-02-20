@@ -1,12 +1,3 @@
-Here is a complete `README.md` for your project, aligned with:
-
-- Product vision
-- Technical foundation
-- EPIC roadmap
-- Agent prompt conventions
-
----
-
 # LLM Chat Anonymization Middleware
 
 API-first PII detection and deterministic anonymization for LLM chat logs.
@@ -205,7 +196,7 @@ No user text is stored beyond session memory.
 ## 1. Install dependencies
 
 ```
-npm install
+npm ci
 ```
 
 ## 2. Start Amplify sandbox
@@ -220,11 +211,17 @@ npx amplify sandbox
 npm run dev
 ```
 
-## 4. Run tests
+## 4. Run quality checks
 
 ```
+npm run lint
+npm run typecheck
 npm run test
+npm run test:coverage
 ```
+
+For full setup instructions, CI pipeline details, Definition of Done, logging policy, and security guardrails see:
+📄 `docs/RUNBOOK.md`
 
 ---
 
@@ -288,11 +285,3 @@ Full details in:
 # 📜 License
 
 See `LICENSE`
-
----
-
-If you'd like, I can also generate:
-
-- A compliance-oriented version of this README (for enterprise clients)
-- A contributor-focused developer guide
-- A SECURITY.md file aligned with your zero-retention stance
