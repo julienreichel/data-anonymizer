@@ -16,12 +16,21 @@
     "@nuxt/eslint": "^1.15.1",
     "@nuxt/ui": "^4.4.0",
     "@nuxtjs/i18n": "^10.2.3",
+    "aws-amplify": "^6.16.2",
     "nuxt": "^4.3.1",
     "vue": "^3.5.28",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.21.0",
+    "@aws-amplify/backend-cli": "^1.8.2",
+    "@aws-amplify/cli": "^14.2.5",
+    "aws-cdk-lib": "^2.234.1",
+    "constructs": "^10.5.1",
+    "esbuild": "^0.27.3",
     "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
