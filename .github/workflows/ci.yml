@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_sandbox_tests:
+        description: 'Run optional sandbox API tests'
+        type: boolean
+        default: false
 
 jobs:
   lint:
@@ -52,7 +58,7 @@ jobs:
         run: npm run typecheck
 
   test:
-    name: Unit Tests
+    name: Unit Tests & Coverage Gate
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -70,9 +76,87 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: test-results/
+          if-no-files-found: error
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
           if-no-files-found: error
+
+  sandbox-api-tests:
+    name: Sandbox API Tests (Optional)
+    needs: [lint, typecheck, test]
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'sandbox-tests') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_sandbox_tests)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run sandbox API tests
+        run: npm run test -- --project sandbox
+        env:
+          SANDBOX_API_URL: ${{ vars.SANDBOX_API_URL }}
+
+      - name: Upload sandbox test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sandbox-test-results
+          path: test-results/
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy (Amplify)
+    needs: [lint, typecheck, test, sandbox-api-tests]
+    if: |
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      needs.lint.result == 'success' &&
+      needs.typecheck.result == 'success' &&
+      needs.test.result == 'success' &&
+      (needs.sandbox-api-tests.result == 'success' || needs.sandbox-api-tests.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Amplify
+        env:
+          AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+        run: |
+          if [ -z "$AMPLIFY_APP_ID" ]; then
+            echo "AMPLIFY_APP_ID secret is not configured; skipping Amplify deploy."
+            exit 0
+          fi
+          npx ampx pipeline-deploy --branch main --app-id "$AMPLIFY_APP_ID"

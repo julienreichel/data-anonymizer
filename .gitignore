@@ -30,3 +30,6 @@ amplifyconfiguration*
 
 # Test coverage
 coverage
+
+# Test results (JUnit XML)
+test-results
