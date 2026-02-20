@@ -85,15 +85,15 @@ The CI pipeline runs automatically on every push to `main` and on every pull req
 
 ### 3.1 Stages
 
-| Step | Command | Failure action |
-|------|---------|---------------|
-| Install | `npm ci` | Fix lock-file / dependency conflict |
-| Prepare Nuxt | `npm run postinstall` | Check Nuxt config for missing modules |
-| Lint | `npm run lint` | Fix ESLint violations (`docs/LINT_POLICY.md`) |
-| Type check | `npm run typecheck` | Fix TypeScript errors |
-| Tests + coverage | `npm run test:coverage` | Fix failing tests or raise coverage |
+| Step              | Command                             | Failure action                                                                                                    |
+| ----------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Install           | `npm ci`                            | Fix lock-file / dependency conflict                                                                               |
+| Prepare Nuxt      | `npm run postinstall`               | Check Nuxt config for missing modules                                                                             |
+| Lint              | `npm run lint`                      | Fix ESLint violations (`docs/LINT_POLICY.md`)                                                                     |
+| Type check        | `npm run typecheck`                 | Fix TypeScript errors                                                                                             |
+| Tests + coverage  | `npm run test:coverage`             | Fix failing tests or raise coverage                                                                               |
 | Sandbox API tests | `npm run test -- --project sandbox` | Optional; triggered by the `sandbox-tests` PR label or via **Actions → Run workflow** (`run_sandbox_tests: true`) |
-| Deploy | `npx ampx pipeline-deploy` | Only runs on `main` after all prior steps pass |
+| Deploy            | `npx ampx pipeline-deploy`          | Only runs on `main` after all prior steps pass                                                                    |
 
 ### 3.2 Configuring GitHub Secrets & Variables
 
@@ -212,15 +212,15 @@ This is a hard privacy rule, not a style preference. Violations can cause PII le
 
 ### 5.1 What May Be Logged
 
-| Field | Example value |
-|-------|--------------|
-| `requestId` | `"req_abc123"` |
-| `route` | `"POST /v1/pii/detect"` |
-| `status` | `200` |
-| `durationMs` | `42` |
-| `entityStats` | `{ "CONTACT.EMAIL": 2, "PERSON.NAME": 1 }` |
-| `reliabilityScore` | `0.84` |
-| `errorCode` | `"INVALID_INPUT"` |
+| Field              | Example value                              |
+| ------------------ | ------------------------------------------ |
+| `requestId`        | `"req_abc123"`                             |
+| `route`            | `"POST /v1/pii/detect"`                    |
+| `status`           | `200`                                      |
+| `durationMs`       | `42`                                       |
+| `entityStats`      | `{ "CONTACT.EMAIL": 2, "PERSON.NAME": 1 }` |
+| `reliabilityScore` | `0.84`                                     |
+| `errorCode`        | `"INVALID_INPUT"`                          |
 
 ### 5.2 What Must Never Be Logged
 
@@ -288,10 +288,10 @@ All future EPICs must respect these non-negotiable guardrails.
 
 ## 7. Related Documents
 
-| Document | Purpose |
-|----------|---------|
-| `docs/SECURITY.md` | Full security policy, threat model, incident response |
-| `docs/LINT_POLICY.md` | ESLint rule set and exception process |
-| `docs/TECHNICAL_SPECIFICATIONS.md` | Architecture, API design, domain models |
-| `docs/EPIC_DESCRIPTION.md` | EPIC roadmap and acceptance criteria |
-| `.github/workflows/ci.yml` | CI pipeline definition |
+| Document                           | Purpose                                               |
+| ---------------------------------- | ----------------------------------------------------- |
+| `docs/SECURITY.md`                 | Full security policy, threat model, incident response |
+| `docs/LINT_POLICY.md`              | ESLint rule set and exception process                 |
+| `docs/TECHNICAL_SPECIFICATIONS.md` | Architecture, API design, domain models               |
+| `docs/EPIC_DESCRIPTION.md`         | EPIC roadmap and acceptance criteria                  |
+| `.github/workflows/ci.yml`         | CI pipeline definition                                |
