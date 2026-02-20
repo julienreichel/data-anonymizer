@@ -111,10 +111,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Provision Amplify sandbox (kept running)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+        run: npx ampx sandbox --once
+
+      - name: Resolve sandbox API URL
+        run: |
+          node -e "const fs=require('fs');const p='amplify_outputs.json';const o=JSON.parse(fs.readFileSync(p,'utf8'));const url=o?.data?.url||'';if(!url){throw new Error('SANDBOX_API_URL not found in '+p);}console.log('SANDBOX_API_URL='+url);" >> "$GITHUB_ENV"
+
       - name: Run sandbox API tests
         run: npm run test -- --project sandbox
-        env:
-          SANDBOX_API_URL: ${{ vars.SANDBOX_API_URL }}
 
       - name: Upload sandbox test results
         uses: actions/upload-artifact@v4
