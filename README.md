@@ -195,25 +195,25 @@ No user text is stored beyond session memory.
 
 ## 1. Install dependencies
 
-```
+```bash
 npm ci
 ```
 
 ## 2. Start Amplify sandbox
 
-```
-npx amplify sandbox
+```bash
+npx ampx sandbox
 ```
 
 ## 3. Run frontend
 
-```
+```bash
 npm run dev
 ```
 
 ## 4. Run quality checks
 
-```
+```bash
 npm run lint
 npm run typecheck
 npm run test
@@ -222,6 +222,45 @@ npm run test:coverage
 
 For full setup instructions, CI pipeline details, Definition of Done, logging policy, and security guardrails see:
 📄 `docs/RUNBOOK.md`
+
+---
+
+# 🚢 CI/CD & Deployment
+
+The project uses GitHub Actions for continuous integration and deployment.
+
+**CI runs automatically** on every push to `main` and on every pull request. It verifies:
+
+- Lint
+- Type check
+- Unit tests with coverage
+- Optional sandbox API tests (triggered by PR label or manual dispatch)
+
+**Deployment to production** happens automatically on `main` after all checks pass.
+
+## Setting up CI
+
+To enable the full CI pipeline (including sandbox tests and deployment):
+
+1. **Configure GitHub Secrets** (Settings → Secrets and variables → Actions):
+   - `AWS_ACCESS_KEY_ID` — AWS IAM access key
+   - `AWS_SECRET_ACCESS_KEY` — corresponding secret key
+   - `AMPLIFY_APP_ID` — your Amplify app ID (e.g., `d2abc123xyz`)
+
+2. **Configure GitHub Variables**:
+   - `AWS_REGION` — AWS region (e.g., `us-east-1` or `eu-central-1`)
+
+3. **Enable sandbox tests** (optional, to avoid provisioning costs on every PR):
+   - Add the `sandbox-tests` label to a PR, or
+   - Go to **Actions → CI → Run workflow** and check `run_sandbox_tests`
+
+4. **Teardown sandbox** when no longer needed:
+   ```bash
+   npx ampx sandbox delete
+   ```
+
+For detailed CI configuration, job stages, artifact uploads, and troubleshooting see:
+📄 `docs/RUNBOOK.md` §3
 
 ---
 

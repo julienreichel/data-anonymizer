@@ -81,6 +81,8 @@ Runs Vitest in interactive watch mode. Useful during active development; not use
 
 ## 3. CI Pipeline
 
+The CI pipeline runs automatically on every push to `main` and on every pull request. It is defined in `.github/workflows/ci.yml`.
+
 ### 3.1 Stages
 
 | Step | Command | Failure action |
@@ -93,7 +95,62 @@ Runs Vitest in interactive watch mode. Useful during active development; not use
 | Sandbox API tests | `npm run test -- --project sandbox` | Optional; triggered by the `sandbox-tests` PR label or via **Actions → Run workflow** (`run_sandbox_tests: true`) |
 | Deploy | `npx ampx pipeline-deploy` | Only runs on `main` after all prior steps pass |
 
-### 3.2 Artifacts
+### 3.2 Configuring GitHub Secrets & Variables
+
+Before CI can run sandbox tests or deploy, you must configure the following in your GitHub repository:
+
+**GitHub Secrets** (Settings → Secrets and variables → Actions → New repository secret):
+
+- `AWS_ACCESS_KEY_ID` — AWS IAM access key with permissions for Amplify and CloudFormation
+- `AWS_SECRET_ACCESS_KEY` — corresponding secret key
+- `AMPLIFY_APP_ID` — the Amplify app ID (visible in the Amplify Console URL, e.g., `d2abc123xyz`)
+
+**GitHub Variables** (Settings → Secrets and variables → Actions → Variables tab):
+
+- `AWS_REGION` — AWS region for deployment (e.g., `us-east-1` or `eu-central-1`)
+
+### 3.3 Running Sandbox API Tests in CI
+
+Sandbox API tests are **optional** and run only when explicitly triggered to avoid provisioning costs on every PR.
+
+**Trigger methods:**
+
+1. **PR Label**: Add the `sandbox-tests` label to a pull request
+2. **Manual Dispatch**: Go to **Actions → CI → Run workflow**, check `run_sandbox_tests`, and click **Run workflow**
+
+When triggered, the CI job will:
+
+1. Provision an Amplify sandbox backend (`npx ampx sandbox --once`)
+2. Extract the API endpoint from `amplify_outputs.json`
+3. Run sandbox API tests against that endpoint
+4. **Keep the sandbox running** (it is not torn down automatically to save provisioning time on subsequent runs)
+
+**To tear down the sandbox manually:**
+
+```bash
+npx ampx sandbox delete
+```
+
+Or add a manual workflow job to automate teardown when desired.
+
+### 3.4 Deployment to Production
+
+Deployment happens automatically when:
+
+- A push is made to the `main` branch
+- All prior checks (lint, typecheck, tests) pass
+- Sandbox API tests either pass or are skipped
+- The `AMPLIFY_APP_ID` secret is configured
+
+The deploy step runs:
+
+```bash
+npx ampx pipeline-deploy --branch main --app-id "$AMPLIFY_APP_ID"
+```
+
+If `AMPLIFY_APP_ID` is not set, deployment is skipped with a warning.
+
+### 3.5 Artifacts
 
 After every run the pipeline uploads two artifacts:
 
@@ -102,7 +159,7 @@ After every run the pipeline uploads two artifacts:
 
 Artifacts are retained for the default GitHub Actions retention period (90 days).
 
-### 3.3 Debugging CI Failures
+### 3.6 Debugging CI Failures
 
 1. **Open the failing workflow run** on GitHub → Actions tab.
 2. **Expand the failed step** to read the inline log.
