@@ -6,6 +6,7 @@ export default defineConfig({
       'app/**/*.{test,spec}.{ts,mts}',
       'amplify/**/*.{test,spec}.{ts,mts}',
     ],
+    reporters: ['default', ['junit', { outputFile: 'test-results/junit.xml' }]],
     coverage: {
       provider: 'v8',
       reportsDirectory: 'coverage',
