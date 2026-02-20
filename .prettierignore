@@ -1,0 +1,9 @@
+node_modules
+dist
+.nuxt
+.output
+.amplify
+*.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
