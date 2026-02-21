@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
 /**
  * Placeholder smoke test — confirms Vitest can discover and run tests in `amplify/`.
@@ -6,6 +6,6 @@ import { describe, expect, it } from 'vitest'
  */
 describe('amplify bootstrap', () => {
   it('test framework is operational', () => {
-    expect(true).toBe(true)
-  })
-})
+    expect(true).toBe(true);
+  });
+});

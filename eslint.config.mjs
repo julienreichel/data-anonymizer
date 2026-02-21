@@ -1,5 +1,5 @@
 // @ts-check
-import withNuxt from './.nuxt/eslint.config.mjs'
+import withNuxt from './.nuxt/eslint.config.mjs';
 
 export default withNuxt(
   { ignores: ['coverage/**'] },
@@ -58,5 +58,5 @@ export default withNuxt(
       // through the safe logger abstraction (adapters/aws/logger.ts) instead.
       'no-console': 'error',
     },
-  },
-)
+  }
+);

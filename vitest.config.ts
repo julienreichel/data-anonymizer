@@ -1,11 +1,8 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: [
-      'app/**/*.{test,spec}.{ts,mts}',
-      'amplify/**/*.{test,spec}.{ts,mts}',
-    ],
+    include: ['app/**/*.{test,spec}.{ts,mts}', 'amplify/**/*.{test,spec}.{ts,mts}'],
     reporters: ['default', ['junit', { outputFile: 'test-results/junit.xml' }]],
     coverage: {
       provider: 'v8',
@@ -21,4 +18,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

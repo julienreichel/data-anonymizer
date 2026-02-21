@@ -16,28 +16,28 @@ logging can all lead to data exposure or difficult-to-audit code. The rules belo
 
 ### Complexity & Size (all source files)
 
-| Rule | Threshold | Why |
-|---|---|---|
-| `complexity` | max 10 | Keeps functions testable and auditable; above ~10 branches a function is hard to reason about. |
-| `max-lines-per-function` | max 50 (skipping blank lines & comments) | Encourages single-responsibility functions. |
-| `max-lines` | max 300 (skipping blank lines & comments) | Prevents monolithic files; keeps modules focused. |
+| Rule                     | Threshold                                 | Why                                                                                            |
+| ------------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `complexity`             | max 10                                    | Keeps functions testable and auditable; above ~10 branches a function is hard to reason about. |
+| `max-lines-per-function` | max 50 (skipping blank lines & comments)  | Encourages single-responsibility functions.                                                    |
+| `max-lines`              | max 300 (skipping blank lines & comments) | Prevents monolithic files; keeps modules focused.                                              |
 
 ### TypeScript Safety (all `.ts` / `.tsx` / `.vue` files)
 
-| Rule | Setting | Why |
-|---|---|---|
-| `@typescript-eslint/no-explicit-any` | `error` | Prevents silent loss of type safety; enforced by `@nuxt/eslint`. |
-| `@typescript-eslint/consistent-type-assertions` | `assertionStyle: "as"`, `objectLiteralTypeAssertions: "never"` | Forbids `<T>value` casts and unsafe `{} as T` object literal casts. |
-| `@typescript-eslint/no-unsafe-type-assertion` | `error` (amplify/ only, typed) | Disallows assertions that widen to a less-safe type (e.g. `as any`). |
-| `@typescript-eslint/no-unsafe-assignment` | `error` (amplify/ only, typed) | Catches assignments that smuggle `any` into typed variables. |
-| `@typescript-eslint/no-unsafe-call` | `error` (amplify/ only, typed) | Prevents calling `any`-typed values as functions. |
-| `@typescript-eslint/no-unsafe-member-access` | `error` (amplify/ only, typed) | Prevents unguarded member access on `any`-typed values. |
-| `@typescript-eslint/no-unsafe-return` | `error` (amplify/ only, typed) | Prevents leaking `any` through function return values. |
+| Rule                                            | Setting                                                        | Why                                                                  |
+| ----------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `@typescript-eslint/no-explicit-any`            | `error`                                                        | Prevents silent loss of type safety; enforced by `@nuxt/eslint`.     |
+| `@typescript-eslint/consistent-type-assertions` | `assertionStyle: "as"`, `objectLiteralTypeAssertions: "never"` | Forbids `<T>value` casts and unsafe `{} as T` object literal casts.  |
+| `@typescript-eslint/no-unsafe-type-assertion`   | `error` (amplify/ only, typed)                                 | Disallows assertions that widen to a less-safe type (e.g. `as any`). |
+| `@typescript-eslint/no-unsafe-assignment`       | `error` (amplify/ only, typed)                                 | Catches assignments that smuggle `any` into typed variables.         |
+| `@typescript-eslint/no-unsafe-call`             | `error` (amplify/ only, typed)                                 | Prevents calling `any`-typed values as functions.                    |
+| `@typescript-eslint/no-unsafe-member-access`    | `error` (amplify/ only, typed)                                 | Prevents unguarded member access on `any`-typed values.              |
+| `@typescript-eslint/no-unsafe-return`           | `error` (amplify/ only, typed)                                 | Prevents leaking `any` through function return values.               |
 
 ### Logging Safety (amplify/ — Lambda handlers)
 
-| Rule | Setting | Why |
-|---|---|---|
+| Rule         | Setting | Why                                                                                                                                                     |
+| ------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `no-console` | `error` | Direct `console.*` calls in Lambda handlers risk logging PII. All output must be routed through the safe logger abstraction (`adapters/aws/logger.ts`). |
 
 ---
