@@ -13,22 +13,24 @@
 
 See [eslint.config.mjs](../eslint.config.mjs) for full config. Key enforcement in CI:
 
-| Rule | Threshold | Scope | Reasoning |
-|------|-----------|-------|-----------|
-| `complexity` | ≤ 10 | all `.ts` | Prevents hidden complexity in security-sensitive code |
-| `max-lines-per-function` | 50 lines | all `.ts` | Encourages single-responsibility functions |
-| `max-lines` | 300 lines (`amplify/`), 600 lines (`app/`) | by folder | Keeps modules focused and navigable |
-| `@typescript-eslint/no-explicit-any` | error | all `.ts` | Forbids untyped escapes |
-| `@typescript-eslint/no-unsafe-*` | error | `amplify/` only | Type-aware safety rules for backend (projectService: true) |
-| `no-console` | error | `amplify/` only | Route all output through `adapters/aws/logger.ts` to prevent PII leakage |
+| Rule                                 | Threshold                                  | Scope           | Reasoning                                                                |
+| ------------------------------------ | ------------------------------------------ | --------------- | ------------------------------------------------------------------------ |
+| `complexity`                         | ≤ 10                                       | all `.ts`       | Prevents hidden complexity in security-sensitive code                    |
+| `max-lines-per-function`             | 50 lines                                   | all `.ts`       | Encourages single-responsibility functions                               |
+| `max-lines`                          | 300 lines (`amplify/`), 600 lines (`app/`) | by folder       | Keeps modules focused and navigable                                      |
+| `@typescript-eslint/no-explicit-any` | error                                      | all `.ts`       | Forbids untyped escapes                                                  |
+| `@typescript-eslint/no-unsafe-*`     | error                                      | `amplify/` only | Type-aware safety rules for backend (projectService: true)               |
+| `no-console`                         | error                                      | `amplify/` only | Route all output through `adapters/aws/logger.ts` to prevent PII leakage |
 
 **Exception Process:** Use inline comments only:
+
 ```typescript
 // eslint-disable-next-line <rule> -- <reason>
 const value = externalSdk.getValue(); // @typescript-eslint/no-explicit-any -- SDK returns untyped
 ```
 
 **DO NOT:**
+
 - Add file-level `/* eslint-disable */` comments
 - Bump thresholds instead of refactoring
 - Disable `no-console` in `amplify/` (use logger instead)
@@ -76,6 +78,7 @@ package.json            # Scripts and dependencies
 
 **Current state (EPIC 0):** Backend structure is minimal; `amplify/backend.ts` aggregates resources.  
 **Future (EPIC 1+):** Core logic will be in:
+
 - `amplify/core/` — domain models, detection engines (regex, LLM), anonymization, validation
 - `amplify/adapters/` — AWS integrations (Bedrock, logging, config)
 - `amplify/handlers/` — REST API route handlers
@@ -105,6 +108,7 @@ npx ampx sandbox         # Start Amplify sandbox (Lambda + auth)
 ```
 
 **CI Pipeline:** See [.github/workflows/ci.yml](../.github/workflows/ci.yml)
+
 - Triggers on push to `main` and PRs
 - Stages: `checks` (lint + typecheck + test) → `sandbox-api-tests` (optional) → `deploy` (gated)
 
@@ -117,18 +121,21 @@ npx ampx sandbox         # Start Amplify sandbox (Lambda + auth)
 **Non-negotiable policy:**
 
 **Never log:**
+
 - Raw input text
 - Entity spans or offsets paired with text substrings
 - LLM prompts or responses
 - Anonymized output
 
 **Only log (aggregate telemetry):**
+
 - `requestId`, `route`, `status`, `durationMs`
 - `entityStats` (counts only, e.g., `{ "CONTACT.EMAIL": 2, "PERSON.NAME": 1 }`)
 - `reliabilityScore`
 - Error codes
 
 **Enforcement:**
+
 - `console.log` forbidden in `amplify/` (ESLint rule: `no-console = error`)
 - Route all backend output through `adapters/aws/logger.ts` (safe logger abstraction)
 - See [docs/SECURITY.md](../docs/SECURITY.md) for full policy
@@ -140,6 +147,7 @@ Defined in [docs/ENTITY_TAXONOMY.md](../docs/ENTITY_TAXONOMY.md).
 Structure: `PARENT.CATEGORY` (e.g., `PERSON.NAME`, `CONTACT.EMAIL`)
 
 Each entity has:
+
 - `type: string` — hierarchical category (e.g., "CONTACT.EMAIL")
 - `label: string` — short form (e.g., "EMAIL")
 - `start: number` — **UTF-16 character offset** (inclusive)
@@ -153,6 +161,7 @@ Each entity has:
 ### Overlap Resolution
 
 Strategy: **Longest match wins.** Implemented in core logic (EPIC 5+).
+
 - Prevents false elimination of overlapping detections
 - Prefers more specific match over shorter ones
 
@@ -262,17 +271,17 @@ See [docs/SECURITY.md](../docs/SECURITY.md) for full threat model. Key mitigatio
 
 ## Key Files for Quick Reference
 
-| File | Purpose |
-|------|---------|
-| [eslint.config.mjs](../eslint.config.mjs) | Linting rules (complexity, function/file size, TS, no-console) |
-| [vitest.config.ts](../vitest.config.ts) | Test discovery, coverage thresholds, CI reporters |
-| [.github/workflows/ci.yml](../.github/workflows/ci.yml) | CI/CD pipeline (lint → typecheck → test → deploy) |
-| [docs/LINT_POLICY.md](../docs/LINT_POLICY.md) | ESLint rules + exception process |
-| [docs/SECURITY.md](../docs/SECURITY.md) | Threat model, logging policy, validation strategy |
-| [docs/RUNBOOK.md](../docs/RUNBOOK.md) | Local setup, CI config, Definition of Done |
-| [docs/TECHNICAL_SPECIFICATIONS.md](../docs/TECHNICAL_SPECIFICATIONS.md) | API design, entity taxonomy, detection strategy |
-| [docs/ENTITY_TAXONOMY.md](../docs/ENTITY_TAXONOMY.md) | Hierarchical PII categories |
-| [PROJECT_STATUS.md](../PROJECT_STATUS.md) | Progress tracking (EPIC status, metrics) |
+| File                                                                    | Purpose                                                        |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [eslint.config.mjs](../eslint.config.mjs)                               | Linting rules (complexity, function/file size, TS, no-console) |
+| [vitest.config.ts](../vitest.config.ts)                                 | Test discovery, coverage thresholds, CI reporters              |
+| [.github/workflows/ci.yml](../.github/workflows/ci.yml)                 | CI/CD pipeline (lint → typecheck → test → deploy)              |
+| [docs/LINT_POLICY.md](../docs/LINT_POLICY.md)                           | ESLint rules + exception process                               |
+| [docs/SECURITY.md](../docs/SECURITY.md)                                 | Threat model, logging policy, validation strategy              |
+| [docs/RUNBOOK.md](../docs/RUNBOOK.md)                                   | Local setup, CI config, Definition of Done                     |
+| [docs/TECHNICAL_SPECIFICATIONS.md](../docs/TECHNICAL_SPECIFICATIONS.md) | API design, entity taxonomy, detection strategy                |
+| [docs/ENTITY_TAXONOMY.md](../docs/ENTITY_TAXONOMY.md)                   | Hierarchical PII categories                                    |
+| [PROJECT_STATUS.md](../PROJECT_STATUS.md)                               | Progress tracking (EPIC status, metrics)                       |
 
 ---
 
