@@ -20,8 +20,6 @@ Context you MUST align with (existing project patterns):
   - No PII previews
   - Only aggregate telemetry (counts, timing, error codes)
 
-- Deterministic anonymization (no LLM rewriting in MVP).
-- LLM-assisted detection is optional per request (`llm.enabled` flag).
 - Testing split:
   - Vitest unit tests for core domain logic
   - API tests against Amplify sandbox
@@ -31,11 +29,11 @@ Context you MUST align with (existing project patterns):
   - lint (strict complexity + function length rules)
   - typecheck
   - unit tests + coverage thresholds
-  - optional sandbox API tests
+  - sandbox API tests
   - Amplify deploy only if green
 
 Your task:
-Generate a SMALL SET of “master prompts” (typically 4–6) that I can give to another coding agent to implement the EPIC end-to-end.
+Generate a SMALL SET of “master prompts” that I can give to another coding agent to implement the EPIC end-to-end.
 
 Each prompt must guide implementation but must NOT provide a full technical solution; it should define boundaries, architectural alignment, and acceptance criteria so the coding agent can implement cleanly and consistently with the existing foundation.
 
@@ -87,8 +85,6 @@ Constraints:
 
 - Strict REST JSON I/O; no free-form AI output accepted without validation.
 - UTF-16 offsets must be handled correctly and tested (including multilingual edge cases).
-- Longest-match-wins overlap resolution.
-- Deterministic anonymization only (LLM replacement out of scope).
 - No new frameworks; stay within Nuxt 4 + Nuxt UI + Amplify Gen 2 + Vitest + GitHub Actions.
 - Code must remain clean, modular, portable (AWS adapters isolated), and aligned with possible future migration to Kubernetes or alternative LLM providers.
 
